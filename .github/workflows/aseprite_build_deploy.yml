@@ -100,16 +100,17 @@ jobs:
 #      - name: (Windows) Setting Visual Studio build environment variables and paths
 #        if: matrix.os == 'windows-latest'
 #        uses: seanmiddleditch/gha-setup-vsdevenv@v1
-      - uses: microsoft/setup-msbuild@v1
+      - uses: microsoft/setup-msbuild@v2
         with:
-          vs-version: '17.0'
-      - name: Install Visual Studio 2019 Build Tools
-        shell: powershell
-        run: choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools;includeRecommended --passive --locale en-US"
-      - name: Set Visual Studio build environment variables
-        if: matrix.os == 'windows-latest'
-        shell: cmd
-        run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+          msbuild-architecture: x64
+          vs-version: '16.0'
+#      - name: Install Visual Studio 2019 Build Tools
+#        shell: powershell
+#        run: choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools;includeRecommended --passive --locale en-US"
+#      - name: Set Visual Studio build environment variables
+#        if: matrix.os == 'windows-latest'
+#        shell: cmd
+#        run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
       - name: (Windows) Run CMake
         if: matrix.os == 'windows-latest'
         working-directory: aseprite/build
