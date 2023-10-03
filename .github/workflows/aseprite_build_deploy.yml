@@ -18,7 +18,7 @@ jobs:
     
     strategy:
       matrix:
-        arch: [x64, Win32]
+        arch: [x64]
 
     steps:
 
@@ -31,7 +31,6 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
 
     - name: Install Dependencies
       run: choco install ninja cmake -y
@@ -69,9 +68,9 @@ jobs:
 
     - name: Package
       run: |
-        7z a aseprite-${{ matrix.arch }}.zip build-${{ matrix.arch }}\bin\*.*
+        7z a aseprite-x64.zip build-${{ matrix.arch }}\bin\*.*
 
     - uses: actions/upload-artifact@v1
       with:
-        name: aseprite-${{ matrix.arch }}
-        path: aseprite-${{ matrix.arch }}.zip
+        name: aseprite-x64
+        path: aseprite-x64.zip
