@@ -6,6 +6,7 @@ on:
     - main
 
 env:
+  ASEPRITE_VERSION: 1.3-rc6
   BUILD_TYPE: Release
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
