@@ -32,7 +32,7 @@ jobs:
 
     - name: Download Aseprite Source
       run: |
-        curl -L -o aseprite.zip https://github.com/aseprite/aseprite/archive/refs/tags/$ASEPRITE_VERSION.zip
+        curl -L -o aseprite.zip https://github.com/aseprite/aseprite/archive/refs/tags/${{ env.ASEPRITE_VERSION }}.zip
         7z x aseprite.zip
 
     - name: Cache Skia
