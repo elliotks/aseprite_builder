@@ -3,7 +3,7 @@ name: Build Aseprite
 on:
   push:
     branches:
-    - master
+    - main
 
 env:
   BUILD_TYPE: Release
@@ -28,7 +28,9 @@ jobs:
 
     - name: Enable Developer Command Prompt
       shell: cmd
-      run: call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\VsDevCmd.bat" -arch=${{ matrix.arch }}
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
 
     - name: Install Dependencies
       run: choco install ninja cmake -y
