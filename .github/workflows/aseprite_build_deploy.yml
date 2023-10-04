@@ -62,11 +62,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
        matrix:
-         os: [windows-latest] #, ubuntu-latest, macOS-latest
+         os: [self-hosted] #, ubuntu-latest, macOS-latest
        fail-fast: false    
     steps:
       - name: (Windows) Install dependencies
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'self-hosted'
         uses: seanmiddleditch/gha-setup-ninja@v1
       - name: (Ubuntu) Install dependencies
         if: matrix.os == 'ubuntu-latest'
@@ -109,7 +109,7 @@ jobs:
 #        shell: cmd
 #        run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
       - name: (Windows) Run CMake
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'self-hosted'
         working-directory: aseprite/build
         shell: cmd
         run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_IGNORE_PATH='C:/ProgramData/chocolatey/bin/;C:/Strawberry/c/bin/' -DLAF_BACKEND=skia -DSKIA_DIR=../../skia -DSKIA_LIBRARY_DIR=../../skia/out/Release-x64 -G Ninja ..
