@@ -94,12 +94,12 @@ jobs:
         run: |
           $url = "https://github.com/aseprite/skia/releases/download/m81-b607b32047/Skia-${{ runner.os }}-Release-X64.zip"
           Invoke-WebRequest -Uri $url -OutFile Skia-windows-Release-X64.zip
-          Expand-Archive -Path "Skia-windows-Release-X64.zip" -DestinationPath skia
+          Expand-Archive -Path "Skia-windows-Release-X64.zip" -DestinationPath skia -Force
       - name: Download Aseprite release
         run: |
           $url = ${{ needs.check-version.outputs.download_url }}
           Invoke-WebRequest -Uri $url -OutFile Aseprite-source.zip
-          Expand-Archive -Path "Aseprite-source.zip" -DestinationPath aseprite
+          Expand-Archive -Path "Aseprite-source.zip" -DestinationPath aseprite -Force
           New-Item -ItemType Directory -Force -Path aseprite/build
 #      - name: (Windows) Set architecture for the produced binary
 #        if: matrix.os == 'windows-latest'
