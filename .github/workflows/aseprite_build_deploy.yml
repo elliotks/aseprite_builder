@@ -68,6 +68,12 @@ jobs:
          os: [self-hosted] #, ubuntu-latest, macOS-latest
        fail-fast: false    
     steps:
+      - name: Clear build directory
+        if: matrix.os == 'self-hosted'
+        run: |
+          if (Test-Path build) {
+            Remove-Item -Recurse -Force build
+          }
       - name: (Windows) Install dependencies
         if: matrix.os == 'self-hosted'
         uses: seanmiddleditch/gha-setup-ninja@v1
