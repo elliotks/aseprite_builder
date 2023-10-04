@@ -74,12 +74,9 @@ jobs:
           if (Test-Path build) {
             Remove-Item -Recurse -Force build
           }
-      - name: Install dependencies
-        if: matrix.os == 'self-hosted'
-        uses: actions/setup-windows-dependencies@v2
       - name: (Windows) Install dependencies
         if: matrix.os == 'self-hosted'
-        uses: seanmiddleditch/gha-setup-ninja@v1
+        uses: seanmiddleditch/gha-setup-ninja@master
       - name: (Ubuntu) Install dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt install -y cmake ninja-build libxcursor-dev libxi-dev libgl1-mesa-dev
@@ -95,8 +92,9 @@ jobs:
       - name: Download Skia if not in cache
         if: steps.skia-cache.outputs.cache-hit != 'true'
         run: |
-          curl -o Skia-${{ runner.os }}-Release-X64.zip -L https://github.com/aseprite/skia/releases/download/m81-b607b32047/Skia-${{ runner.os }}-Release-X64.zip
-          unzip Skia-${{ runner.os }}-Release-X64.zip -d skia
+          $url = "https://github.com/aseprite/skia/releases/download/m81-b607b32047/Skia-${{ runner.os }}-Release-X64.zip"
+          Invoke-WebRequest -Uri $url -OutFile Skia-windows-Release-X64.zip
+          Expand-Archive -Path "Skia-windows-Release-X64.zip" -DestinationPath skia
       - name: Download Aseprite release
         run: |
           curl -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
