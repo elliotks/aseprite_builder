@@ -68,6 +68,9 @@ jobs:
          os: [self-hosted] #, ubuntu-latest, macOS-latest
        fail-fast: false    
     steps:
+      - name: (Windows) Install actions
+        if: matrix.os == 'self-hosted'
+        uses: actions/virtual-environments@windows-latest
       - name: (Windows) Install dependencies
         if: matrix.os == 'self-hosted'
         uses: seanmiddleditch/gha-setup-ninja@v1
