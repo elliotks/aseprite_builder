@@ -3,7 +3,7 @@ name: Build and deploy Aseprite
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   BUILD_TYPE: Release
