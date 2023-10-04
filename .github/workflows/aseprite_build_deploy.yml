@@ -72,7 +72,7 @@ jobs:
         if: matrix.os == 'self-hosted'
         run: |
           if (Test-Path build) {
-            Remove-Item -Recurse -Force build
+            Remove-Item -Recurse -Force _actions/*
           }
       - name: (Windows) Install dependencies
         if: matrix.os == 'self-hosted'
