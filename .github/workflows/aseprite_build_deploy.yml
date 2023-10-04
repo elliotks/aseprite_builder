@@ -72,11 +72,14 @@ jobs:
         if: matrix.os == 'self-hosted'
         run: |
           if (Test-Path build) {
-            Remove-Item -Recurse -Force _actions/*
+            Remove-Item -Recurse -Force build
           }
+      - name: Install dependencies
+        if: matrix.os == 'self-hosted'
+        uses: actions/setup-windows-dependencies@v2
       - name: (Windows) Install dependencies
         if: matrix.os == 'self-hosted'
-        uses: seanmiddleditch/gha-setup-ninja@master
+        uses: seanmiddleditch/gha-setup-ninja@v1
       - name: (Ubuntu) Install dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt install -y cmake ninja-build libxcursor-dev libxi-dev libgl1-mesa-dev
