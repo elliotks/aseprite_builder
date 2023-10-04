@@ -23,16 +23,17 @@ jobs:
     - name: Get latest version info
       id: version_info
       run: |
-        powershell.exe
-        data=$(curl -sL https://api.github.com/repos/aseprite/aseprite/releases/latest)
-        LATEST_TAG=$(echo "${data}" | jq -r '.tag_name')
-        DOWNLOAD_URL=$(echo "${data}" | jq -r '.assets[].browser_download_url')
-        VERSION_INFO=$(echo "${data}" | jq -r '.body')
-        
-        echo "${LATEST_TAG}" > ${LATEST_TAG}.txt
-        echo "::set-output name=latest_tag::${LATEST_TAG}"
-        echo "::set-output name=download_url::${DOWNLOAD_URL}"
-        echo "::set-output name=version_info::${VERSION_INFO}"
+        $url = "https://api.github.com/repos/aseprite/aseprite/releases/latest"
+        $data = Invoke-RestMethod -Uri $url
+        $LATEST_TAG = $data.tag_name
+        $DOWNLOAD_URL = $data.assets.browser_download_url
+        $VERSION_INFO = $data.body
+
+        Set-Content -Path "$LATEST_TAG.txt" -Value $LATEST_TAG
+        echo "::set-output name=latest_tag::$LATEST_TAG"
+        echo "::set-output name=download_url::$DOWNLOAD_URL"
+        echo "::set-output name=version_info::$VERSION_INFO"
+      shell: pwsh
     - name: Load version from cache
       id: version_check
       uses: actions/cache@v2
