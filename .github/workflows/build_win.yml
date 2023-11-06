@@ -11,6 +11,12 @@ jobs:
     runs-on: windows-latest  # Use the latest Windows environment for the runner
 
     steps:
+      - name: Checkout Aseprite code
+        uses: actions/checkout@v2
+        with:
+          repository: aseprite/aseprite  # Replace with the correct repository name if different
+          ref: ${{ github.event.inputs.tag }}  # This checks out the specified tag or branch
+
       - name: Checkout code
         uses: actions/checkout@v2  # This step checks out the repository content
 
