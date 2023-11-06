@@ -1,0 +1,50 @@
+name: Build Aseprite for Windows x64
+
+on:
+  push:
+    branches:
+      - master  # Run the workflow whenever there's a push to the master branch
+
+jobs:
+  build:
+    name: Build on Windows
+    runs-on: windows-latest  # Use the latest Windows environment for the runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # This step checks out the repository content
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # Aseprite's build scripts require Python
+
+      - name: Install dependencies
+        run: |
+          choco install -y ninja  # Ninja is required for the build
+          choco install -y cmake --installargs 'ADD_CMAKE_TO_PATH=System'  # CMake is the build system used
+
+      # If there are other dependencies like Skia, you would need to build or download them here
+
+      - name: Create build directory
+        run: mkdir build
+
+      - name: Configure the project with CMake
+        working-directory: build
+        run: |
+          cmake -DCMAKE_BUILD_TYPE=Release -DLAF_BACKEND=skia -DSKIA_DIR=path/to/skia -G "Ninja" ..
+
+      - name: Build Aseprite
+        working-directory: build
+        run: ninja aseprite
+
+      - name: Package Aseprite
+        working-directory: build/bin
+        run: |
+          Compress-Archive -LiteralPath aseprite.exe, data -DestinationPath aseprite-windows-x64.zip
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: aseprite-windows-x64
+          path: build/bin/aseprite-windows-x64.zip
