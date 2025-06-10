@@ -43,14 +43,17 @@ jobs:
       - name: Download and build Skia
         working-directory: aseprite
         run: |
-          # Download Aseprite's official Skia build script
-          curl -fsSL -o get_skia.bat https://raw.githubusercontent.com/aseprite/aseprite/main/third_party/get_skia.bat
-          # Run the build script (downloads and builds Skia for Windows)
+          # Fetch the latest get_skia.bat from the correct branch
+          curl -fsSL -o get_skia.bat https://raw.githubusercontent.com/aseprite/aseprite/${{ github.event.inputs.tag || 'main' }}/third_party/get_skia.bat
+          if not exist get_skia.bat (
+            echo "Failed to download get_skia.bat. Check the URL and branch/tag."
+            exit /b 1
+          )
+          # Run the Skia build script
           cmd /c get_skia.bat
-        # This will build Skia to aseprite/third_party/skia
 
       - name: Set SKIA_DIR environment variable
-        run: echo "SKIA_DIR=${{ github.workspace }}/aseprite/third_party/skia" >> $GITHUB_ENV
+        run: echo "SKIA_DIR=${{ github.workspace }}\\aseprite\\third_party\\skia" >> $GITHUB_ENV
 
       - name: Create build directory
         run: mkdir build
