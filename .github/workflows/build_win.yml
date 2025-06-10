@@ -3,49 +3,73 @@ name: Build Aseprite for Windows x64
 on:
   push:
     branches:
-      - master  # Run the workflow whenever there's a push to the master branch
-  workflow_dispatch:  # This line allows manual triggering
+      - master
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Aseprite tag or branch to build'
+        required: false
+        default: 'main'
+
 jobs:
   build:
     name: Build on Windows
-    runs-on: windows-latest  # Use the latest Windows environment for the runner
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout Aseprite code
+      - name: Checkout Aseprite source
         uses: actions/checkout@v2
         with:
-          repository: aseprite/aseprite  # Replace with the correct repository name if different
-          ref: ${{ github.event.inputs.tag }}  # This checks out the specified tag or branch
+          repository: aseprite/aseprite
+          ref: ${{ github.event.inputs.tag }}
+          path: aseprite
 
-      - name: Checkout code
-        uses: actions/checkout@v2  # This step checks out the repository content
+      - name: Checkout builder repo
+        uses: actions/checkout@v2
+        with:
+          path: builder
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'  # Aseprite's build scripts require Python
+          python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install build dependencies
         run: |
-          choco install -y ninja  # Ninja is required for the build
-          choco install -y cmake --installargs 'ADD_CMAKE_TO_PATH=System'  # CMake is the build system used
+          choco install -y ninja
+          choco install -y cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+          choco install -y git
 
-      # If there are other dependencies like Skia, you would need to build or download them here
+      - name: Download and build Skia
+        working-directory: aseprite
+        run: |
+          # Download Aseprite's official Skia build script
+          curl -fsSL -o get_skia.bat https://raw.githubusercontent.com/aseprite/aseprite/main/third_party/get_skia.bat
+          # Run the build script (downloads and builds Skia for Windows)
+          cmd /c get_skia.bat
+        # This will build Skia to aseprite/third_party/skia
+
+      - name: Set SKIA_DIR environment variable
+        run: echo "SKIA_DIR=${{ github.workspace }}/aseprite/third_party/skia" >> $GITHUB_ENV
 
       - name: Create build directory
         run: mkdir build
+        working-directory: aseprite
 
       - name: Configure the project with CMake
-        working-directory: build
-        run: |
-          cmake -DCMAKE_BUILD_TYPE=Release -DLAF_BACKEND=skia -DSKIA_DIR=path/to/skia -G "Ninja" ..
+        working-directory: aseprite/build
+        run: >
+          cmake -DCMAKE_BUILD_TYPE=Release
+          -DLAF_BACKEND=skia
+          -DSKIA_DIR="${{ env.SKIA_DIR }}"
+          -G "Ninja" ..
 
       - name: Build Aseprite
-        working-directory: build
+        working-directory: aseprite/build
         run: ninja aseprite
 
       - name: Package Aseprite
-        working-directory: build/bin
+        working-directory: aseprite/build/bin
         run: |
           Compress-Archive -LiteralPath aseprite.exe, data -DestinationPath aseprite-windows-x64.zip
 
@@ -53,4 +77,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: aseprite-windows-x64
-          path: build/bin/aseprite-windows-x64.zip
+          path: aseprite/build/bin/aseprite-windows-x64.zip
